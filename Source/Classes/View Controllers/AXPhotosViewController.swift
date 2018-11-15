@@ -61,7 +61,7 @@ import FLAnimatedImage_tvOS
     @objc open weak var delegate: AXPhotosViewControllerDelegate?
     
     /// The underlying `OverlayView` that is used for displaying photo captions, titles, and actions.
-    @objc public let overlayView = AXOverlayView()
+    @objc public var overlayView = AXOverlayView()
     
     /// The photos to display in the PhotosViewController.
     @objc open var dataSource = AXPhotosDataSource() {
