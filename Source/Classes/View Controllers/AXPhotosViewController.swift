@@ -61,7 +61,7 @@ import FLAnimatedImage_tvOS
     @objc open weak var delegate: AXPhotosViewControllerDelegate?
     
     /// The underlying `OverlayView` that is used for displaying photo captions, titles, and actions.
-    @objc public var overlayView = AXOverlayView()
+    @objc open var overlayView = AXOverlayView()
     
     /// The photos to display in the PhotosViewController.
     @objc open var dataSource = AXPhotosDataSource() {
@@ -601,7 +601,7 @@ import FLAnimatedImage_tvOS
             #endif
         }
         
-        self.overlayView.contentInset = contentInset
+        //self.overlayView.contentInset = contentInset
     }
 
     // MARK: - Gesture recognizers
