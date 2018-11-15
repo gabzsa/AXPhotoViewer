@@ -137,7 +137,7 @@ import UIKit
     
     /// The inset of the contents of the `OverlayView`. Use this property to adjust layout for things such as status bar height.
     /// For internal use only.
-    var contentInset: UIEdgeInsets = .zero {
+    open var contentInset: UIEdgeInsets = .zero {
         didSet {
             self.setNeedsLayout()
         }
@@ -252,7 +252,7 @@ import UIKit
     }
     
     // MARK: - Show / hide interface
-    func setShowInterface(_ show: Bool, animated: Bool, alongside closure: (() -> Void)? = nil, completion: ((Bool) -> Void)? = nil) {
+    open func setShowInterface(_ show: Bool, animated: Bool, alongside closure: (() -> Void)? = nil, completion: ((Bool) -> Void)? = nil) {
         let alpha: CGFloat = show ? 1 : 0
         if abs(alpha - self.alpha) <= .ulpOfOne {
             return

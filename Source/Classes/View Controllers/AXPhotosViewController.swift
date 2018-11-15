@@ -601,7 +601,7 @@ import FLAnimatedImage_tvOS
             #endif
         }
         
-        //self.overlayView.contentInset = contentInset
+        self.overlayView.contentInset = contentInset
     }
 
     // MARK: - Gesture recognizers
