@@ -621,7 +621,7 @@ import FLAnimatedImage_tvOS
     }
     
     #if os(iOS)
-    @objc fileprivate func didPanWithGestureRecognizer(_ sender: UIPanGestureRecognizer) {
+    @objc open func didPanWithGestureRecognizer(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began {
             self.transitionController?.forceNonInteractiveDismissal = false
             self.dismiss(animated: true, completion: nil)
