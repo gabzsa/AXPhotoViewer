@@ -620,15 +620,18 @@ import FLAnimatedImage_tvOS
         self.currentDisplayMode.next()
         
         let imageSize = self.currentPhotoViewController?.zoomingImageView.image?.size ?? .zero
-        if imageSize.width / imageSize.height >= 1.0 && self.currentDisplayMode == .fit {
+        var portrait = imageSize.width / imageSize.height < 1.0
+        if !portrait && self.currentDisplayMode == .fit {
             self.currentDisplayMode = .fill
         }
         
         var show = false
+        var animate = false
         
         switch (self.currentDisplayMode) {
         case .fill:
             show = true
+            animate = portrait
             fallthrough
         case .noUi:
             self.overlayView.setShowInterface(show, animated: true, alongside: { [weak self] in
@@ -643,10 +646,13 @@ import FLAnimatedImage_tvOS
                 self.overlayView(self.overlayView, visibilityWillChange: show)
             })
         case .fit:
-            self.currentPhotoViewController?.zoomingImageView
+            animate = true
         }
         
-        self.currentPhotoViewController?.zoomingImageView.image = self.currentPhotoViewController?.zoomingImageView.image
+        UIView.animate(withDuration: animate ? 0.2 : 0.0) {
+            self.currentPhotoViewController?.zoomingImageView.image = self.currentPhotoViewController?.zoomingImageView.image
+        }
+        
     }
     
     #if os(iOS)
