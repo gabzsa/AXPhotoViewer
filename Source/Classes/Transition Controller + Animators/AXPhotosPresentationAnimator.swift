@@ -51,10 +51,12 @@ class AXPhotosPresentationAnimator: AXPhotosTransitionAnimator {
             aspectRatioAdjustedSize.width = aspectRatioAdjustedSize.height * imageAspectRatio
         }
         
-        let scale = min(
-            to.view.frame.size.width / aspectRatioAdjustedSize.width,
-            to.view.frame.size.height / aspectRatioAdjustedSize.height
-        )
+        let scale = imageAspectRatio < 0.67 ?
+            max(to.view.frame.size.width / aspectRatioAdjustedSize.width,
+                to.view.frame.size.height / aspectRatioAdjustedSize.height) :
+            min(to.view.frame.size.width / aspectRatioAdjustedSize.width,
+                to.view.frame.size.height / aspectRatioAdjustedSize.height)
+        
         let scaledSize = CGSize(
             width: aspectRatioAdjustedSize.width * scale,
             height: aspectRatioAdjustedSize.height * scale

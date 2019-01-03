@@ -117,6 +117,17 @@ import FLAnimatedImage_tvOS
         case none, left, right
     }
     
+    fileprivate enum DisplayMode: CaseIterable {
+        case fill, noUi, fit
+        
+        mutating func next() {
+            let allCases = type(of: self).allCases
+            self = allCases[(allCases.index(of: self)! + 1) % allCases.count]
+        }
+    }
+    
+    fileprivate var currentDisplayMode: DisplayMode = .fill
+    
     /// If the `PhotosViewController` is being presented in a fullscreen container, this value is set when the `PhotosViewController`
     /// is added to a parent view controller to allow `PhotosViewController` to be its transitioning delegate.
     fileprivate weak var containerViewController: UIViewController? {
@@ -606,18 +617,31 @@ import FLAnimatedImage_tvOS
 
     // MARK: - Gesture recognizers
     @objc fileprivate func didSingleTapWithGestureRecognizer(_ sender: UITapGestureRecognizer) {
-        let show = (self.overlayView.alpha == 0)
-        self.overlayView.setShowInterface(show, animated: true, alongside: { [weak self] in
-            guard let `self` = self else {
-                return
-            }
-            
-            #if os(iOS)
-            self.updateStatusBarAppearance(show: show)
-            #endif
-            
-            self.overlayView(self.overlayView, visibilityWillChange: show)
-        })
+        self.currentDisplayMode.next()
+        
+        var show = false
+        
+        switch (self.currentDisplayMode) {
+        case .fill:
+            show = true
+            fallthrough
+        case .noUi:
+            self.overlayView.setShowInterface(show, animated: true, alongside: { [weak self] in
+                guard let `self` = self else {
+                    return
+                }
+                
+                #if os(iOS)
+                self.updateStatusBarAppearance(show: show)
+                #endif
+                
+                self.overlayView(self.overlayView, visibilityWillChange: show)
+            })
+        case .fit:
+            self.currentPhotoViewController?.zoomingImageView
+        }
+        
+        self.currentPhotoViewController?.zoomingImageView.image = self.currentPhotoViewController?.zoomingImageView.image
     }
     
     #if os(iOS)
@@ -977,6 +1001,21 @@ import FLAnimatedImage_tvOS
         return self.maximumZoomScale(for: photo, minimumZoomScale: minimumZoomScale, imageSize: imageSize)
     }
     
+    public func photoViewController(_ photoViewController: AXPhotoViewController, zoomScaleForPhotoAt index: Int, imageSize: CGSize) -> CGFloat {
+        
+        guard let photo = self.dataSource.photo(at: index) else {
+            return .leastNormalMagnitude
+        }
+        
+        let scaleWidth = photoViewController.view.bounds.size.width / imageSize.width
+        let scaleHeight = photoViewController.view.bounds.size.height / imageSize.height
+        
+        return imageSize.width / imageSize.height < 0.67 && self.currentDisplayMode != .fit ?
+            max(scaleWidth, scaleHeight) : min(scaleWidth, scaleHeight)
+        
+        //return self.zoomScale(for: photo, imageSize: imageSize)
+    }
+    
     // MARK: - AXPhotosViewControllerDelegate calls
     
     /// Called when the `AXPhotosViewController` navigates to a new photo. This is defined as when the swipe percent between pages
@@ -1043,6 +1082,13 @@ import FLAnimatedImage_tvOS
         return self.delegate?.photosViewController?(self,
                                                     maximumZoomScaleFor: photo,
                                                     minimumZoomScale: minimumZoomScale,
+                                                    imageSize: imageSize) ?? .leastNormalMagnitude
+    }
+    
+    @objc(zoomScaleForPhoto:imageSize:)
+    open func zoomScale(for photo: AXPhotoProtocol, imageSize: CGSize) -> CGFloat {
+        return self.delegate?.photosViewController?(self,
+                                                    zoomScaleFor: photo,
                                                     imageSize: imageSize) ?? .leastNormalMagnitude
     }
     
@@ -1288,6 +1334,11 @@ fileprivate extension UIScrollView {
     optional func photosViewController(_ photosViewController: AXPhotosViewController,
                                        maximumZoomScaleFor photo: AXPhotoProtocol,
                                        minimumZoomScale: CGFloat,
+                                       imageSize: CGSize) -> CGFloat
+    
+    @objc(photosViewController:zoomScaleForPhoto:imageSize:)
+    optional func photosViewController(_ photosViewController: AXPhotosViewController,
+                                       zoomScaleFor photo: AXPhotoProtocol,
                                        imageSize: CGSize) -> CGFloat
     
     #if os(iOS)

@@ -161,7 +161,7 @@ class AXZoomingImageView: UIScrollView, UIScrollViewDelegate {
         
         let scaleWidth = self.bounds.size.width / imageSize.width
         let scaleHeight = self.bounds.size.height / imageSize.height
-        self.minimumZoomScale = min(scaleWidth, scaleHeight)
+        self.minimumZoomScale = self.zoomScaleDelegate?.zoomingImageView(self, scaleFor: imageSize) ?? min(scaleWidth, scaleHeight)
         
         let delegatedMaxZoomScale = self.zoomScaleDelegate?.zoomingImageView(self, maximumZoomScaleFor: imageSize)
         if let maximumZoomScale = delegatedMaxZoomScale, (maximumZoomScale - self.minimumZoomScale) >= 0 {
@@ -176,6 +176,12 @@ class AXZoomingImageView: UIScrollView, UIScrollViewDelegate {
             self.zoomScale = self.minimumZoomScale + 0.1
         }
         self.zoomScale = self.minimumZoomScale
+        
+        let leftMargin = (self.frame.width - self.imageView.frame.width) * 0.5
+        let topMargin = (self.frame.height - self.imageView.frame.height) * 0.5
+        
+        self.contentOffset = CGPoint(x: max(0, -leftMargin), y: max(0, -topMargin))
+
         
         self.isScrollEnabled = false
     }
@@ -208,4 +214,6 @@ class AXZoomingImageView: UIScrollView, UIScrollViewDelegate {
 
 protocol AXZoomingImageViewDelegate: class {
     func zoomingImageView(_ zoomingImageView: AXZoomingImageView, maximumZoomScaleFor imageSize: CGSize) -> CGFloat
+    
+    func zoomingImageView(_ zoomingImageView: AXZoomingImageView, scaleFor imageSize: CGSize) -> CGFloat
 }
