@@ -619,6 +619,11 @@ import FLAnimatedImage_tvOS
     @objc fileprivate func didSingleTapWithGestureRecognizer(_ sender: UITapGestureRecognizer) {
         self.currentDisplayMode.next()
         
+        let imageSize = self.currentPhotoViewController?.zoomingImageView.image?.size ?? .zero
+        if imageSize.width / imageSize.height >= 1.0 && self.currentDisplayMode == .fit {
+            self.currentDisplayMode = .fill
+        }
+        
         var show = false
         
         switch (self.currentDisplayMode) {
@@ -1010,7 +1015,7 @@ import FLAnimatedImage_tvOS
         let scaleWidth = photoViewController.view.bounds.size.width / imageSize.width
         let scaleHeight = photoViewController.view.bounds.size.height / imageSize.height
         
-        return imageSize.width / imageSize.height < 0.67 && self.currentDisplayMode != .fit ?
+        return imageSize.width / imageSize.height < 1.0 && self.currentDisplayMode != .fit ?
             max(scaleWidth, scaleHeight) : min(scaleWidth, scaleHeight)
         
         //return self.zoomScale(for: photo, imageSize: imageSize)
