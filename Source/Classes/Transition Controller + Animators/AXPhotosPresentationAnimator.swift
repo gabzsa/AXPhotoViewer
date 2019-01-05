@@ -88,15 +88,17 @@ class AXPhotosPresentationAnimator: AXPhotosTransitionAnimator {
             self?.fadeView?.alpha = 1
         }
         
-        UIView.animate(
-            withDuration: self.transitionDuration(using: transitionContext),
-            delay: 0,
-            usingSpringWithDamping: self.transitionInfo.presentationSpringDampingRatio,
-            initialSpringVelocity: 0,
-            options: [.curveEaseInOut, .beginFromCurrentState, .allowAnimatedContent],
-            animations: scaleAnimations,
-            completion: scaleCompletion
-        )
+//        UIView.animate(
+//            withDuration: self.transitionDuration(using: transitionContext),
+//            delay: 0,
+//            usingSpringWithDamping: self.transitionInfo.presentationSpringDampingRatio,
+//            initialSpringVelocity: 0,
+//            options: [.curveEaseInOut, .beginFromCurrentState, .allowAnimatedContent],
+//            animations: scaleAnimations,
+//            completion: scaleCompletion
+//        )
+        
+        UIView.animate(withDuration: self.transitionDuration(using: transitionContext), delay: 0, options: [.curveLinear, .beginFromCurrentState, .allowAnimatedContent], animations: scaleAnimations, completion: scaleCompletion)
         
         UIView.animate(
             withDuration: self.transitionDuration(using: transitionContext) * self.fadeInOutTransitionRatio,

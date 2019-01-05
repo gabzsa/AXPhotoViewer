@@ -220,7 +220,7 @@ class AXPhotosDismissalAnimator: AXPhotosTransitionAnimator, UIViewControllerInt
             offscreenImageViewCenter = extrapolated.center
             
             if self.forceImmediateInteractiveDismissal {
-                scaleAnimationOptions = [.curveEaseInOut, .beginFromCurrentState, .allowAnimatedContent]
+                scaleAnimationOptions = [.curveLinear, .beginFromCurrentState, .allowAnimatedContent]
                 scaleInitialSpringVelocity = 0
             } else {
                 var divisor: CGFloat = 1
@@ -243,8 +243,6 @@ class AXPhotosDismissalAnimator: AXPhotosTransitionAnimator, UIViewControllerInt
         UIView.animate(
             withDuration: self.transitionDuration(using: transitionContext),
             delay: 0,
-            usingSpringWithDamping: self.transitionInfo.dismissalSpringDampingRatio,
-            initialSpringVelocity: scaleInitialSpringVelocity,
             options: scaleAnimationOptions,
             animations: scaleAnimations,
             completion: scaleCompletion
