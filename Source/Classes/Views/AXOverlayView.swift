@@ -189,7 +189,7 @@ import UIKit
     }
     
     public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
     
     deinit {
@@ -209,6 +209,11 @@ import UIKit
     open override func layoutSubviews() {
         super.layoutSubviews()
         
+        self.layoutContainers()
+        self.isFirstLayout = false
+    }
+    
+    open func layoutContainers() {
         self.topStackContainer.contentInset = UIEdgeInsets(top: self.contentInset.top,
                                                            left: self.contentInset.left,
                                                            bottom: 0,
@@ -223,11 +228,10 @@ import UIKit
         self.bottomStackContainer.frame = CGRect(origin: CGPoint(x: 0, y: self.frame.size.height - bottomStackSize.height),
                                                  size: bottomStackSize)
         
-        self.isFirstLayout = false
     }
     
     open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        if let view = super.hitTest(point, with: event) as? UIControl {
+        if let view = super.hitTest(point, with: event), view != self {
             return view
         }
         
@@ -291,7 +295,7 @@ import UIKit
     }
     
     // MARK: - AXCaptionViewProtocol
-    func updateCaptionView(photo: AXPhotoProtocol) {
+    open func updateCaptionView(photo: AXPhotoProtocol) {
         self.captionView.applyCaptionInfo(attributedTitle: photo.attributedTitle ?? nil,
                                           attributedDescription: photo.attributedDescription ?? nil,
                                           attributedCredit: photo.attributedCredit ?? nil)

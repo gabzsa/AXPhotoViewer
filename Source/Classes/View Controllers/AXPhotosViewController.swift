@@ -616,7 +616,7 @@ import FLAnimatedImage_tvOS
     }
 
     // MARK: - Gesture recognizers
-    @objc fileprivate func didSingleTapWithGestureRecognizer(_ sender: UITapGestureRecognizer) {
+    @objc open func didSingleTapWithGestureRecognizer(_ sender: UITapGestureRecognizer) {
         self.currentDisplayMode.next()
         
         let imageSize = self.currentPhotoViewController?.zoomingImageView.image?.size ?? .zero
