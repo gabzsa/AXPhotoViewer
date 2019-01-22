@@ -186,6 +186,21 @@ class AXZoomingImageView: UIScrollView, UIScrollViewDelegate {
         self.isScrollEnabled = false
     }
     
+    func refreshZoom() {
+        let imageSize = self.imageView.image?.size ?? self.imageView.animatedImage?.size ?? CGSize(width: 1, height: 1)
+        
+        let scaleWidth = self.bounds.size.width / imageSize.width
+        let scaleHeight = self.bounds.size.height / imageSize.height
+        self.minimumZoomScale = self.zoomScaleDelegate?.zoomingImageView(self, scaleFor: imageSize) ?? min(scaleWidth, scaleHeight)
+
+        self.zoomScale = self.minimumZoomScale
+        
+        let leftMargin = (self.frame.width - self.imageView.frame.width) * 0.5
+        let topMargin = (self.frame.height - self.imageView.frame.height) * 0.5
+        
+        self.contentOffset = CGPoint(x: max(0, -leftMargin), y: max(0, -topMargin))
+    }
+    
     #if os(iOS)
     // MARK: - UITapGestureRecognizer
     @objc fileprivate func doubleTapAction(_ sender: UITapGestureRecognizer) {

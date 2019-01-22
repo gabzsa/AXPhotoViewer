@@ -620,7 +620,7 @@ import FLAnimatedImage_tvOS
         self.currentDisplayMode.next()
         
         let imageSize = self.currentPhotoViewController?.zoomingImageView.image?.size ?? .zero
-        var portrait = imageSize.width / imageSize.height < 1.0
+        var portrait = (imageSize.width / imageSize.height < 1.0) == (UIDevice.current.orientation == .portrait ||   UIDevice.current.orientation == .portraitUpsideDown)
         if !portrait && self.currentDisplayMode == .fit {
             self.currentDisplayMode = .fill
         }
@@ -649,8 +649,14 @@ import FLAnimatedImage_tvOS
             animate = true
         }
         
-        UIView.animate(withDuration: animate ? 0.2 : 0.0) {
-            self.currentPhotoViewController?.zoomingImageView.image = self.currentPhotoViewController?.zoomingImageView.image
+        if !animate {
+            self.currentPhotoViewController?.zoomingImageView.refreshZoom()
+            //self.currentPhotoViewController?.zoomingImageView.image = self.currentPhotoViewController?.zoomingImageView.image
+        } else {
+            UIView.animate(withDuration: 0.2) {
+                self.currentPhotoViewController?.zoomingImageView.refreshZoom()
+                //self.currentPhotoViewController?.zoomingImageView.image = self.currentPhotoViewController?.zoomingImageView.image
+            }
         }
         
     }
@@ -1021,7 +1027,7 @@ import FLAnimatedImage_tvOS
         let scaleWidth = photoViewController.view.bounds.size.width / imageSize.width
         let scaleHeight = photoViewController.view.bounds.size.height / imageSize.height
         
-        return imageSize.width / imageSize.height < 1.0 && self.currentDisplayMode != .fit ?
+        return ((imageSize.width / imageSize.height < 1.0) == (UIDevice.current.orientation == .portrait ||   UIDevice.current.orientation == .portraitUpsideDown)) && self.currentDisplayMode != .fit ?
             max(scaleWidth, scaleHeight) : min(scaleWidth, scaleHeight)
         
         //return self.zoomScale(for: photo, imageSize: imageSize)

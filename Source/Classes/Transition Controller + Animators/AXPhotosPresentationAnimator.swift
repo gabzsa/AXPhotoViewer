@@ -51,7 +51,7 @@ class AXPhotosPresentationAnimator: AXPhotosTransitionAnimator {
             aspectRatioAdjustedSize.width = aspectRatioAdjustedSize.height * imageAspectRatio
         }
         
-        let scale = imageAspectRatio < 1.0 ?
+        let scale = (imageAspectRatio < 1.0) == (UIDevice.current.orientation == .portrait ||   UIDevice.current.orientation == .portraitUpsideDown) ?
             max(to.view.frame.size.width / aspectRatioAdjustedSize.width,
                 to.view.frame.size.height / aspectRatioAdjustedSize.height) :
             min(to.view.frame.size.width / aspectRatioAdjustedSize.width,
